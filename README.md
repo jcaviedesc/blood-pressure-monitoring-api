@@ -18,5 +18,5 @@ $ pip install -r requirements.txt
 ## Run it
 In the root directory run:
 ```bash
-$ uvicorn src.main:app --reload
+$ uvicorn app.main:app --reload
 ```
