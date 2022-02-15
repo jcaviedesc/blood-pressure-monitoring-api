@@ -1,0 +1,151 @@
+{
+  "insert": {
+    "blood-pressure": [
+      {
+        "records": [
+          {
+            "sys": 130,
+            "dia": 90,
+            "bpm": 93,
+            "datetime": "12121341234"
+          },
+          {
+            "sys": 124,
+            "dia": 91,
+            "bpm": 89,
+            "datetime": "121213412434"
+          }
+        ],
+        "timestamp": "15/02/2022"
+      },
+      {
+        "records": [
+          {
+            "sys": 130,
+            "dia": 90,
+            "bpm": 93,
+            "datetime": "12121341234",
+            "why": "me tome un cafe y me senti mal, fisicamente empece a sudar frio"
+          }
+        ],
+        "timestamp": "15/02/2022"
+      }
+    ]
+  },
+  "get": {
+    "blood-pressure/:userid?interval=day&start_date=15/02/2022": {
+      "records": [
+        {
+          "sys": 130,
+          "dia": 90,
+          "bpm": 93,
+          "time": "9:50"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "time": "9:55"
+        },
+        {
+          "sys": 130,
+          "dia": 90,
+          "bpm": 93,
+          "time": "16:30"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "time": "16:33"
+        }
+      ],
+      "sys_average-": 192,
+      "dia_average-": 135.5,
+      "interval": "day",
+      "timestamp": "15/02/2022"
+    },
+    "blood-pressure/:userid?interval=week&start_date=15/02/2022": {
+      "records": [
+        {
+          "sys": 130,
+          "dia": 90,
+          "bpm": 93,
+          "day": "Lun"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "day": "Mar"
+        },
+        {
+          "sys": 130,
+          "dia": 90,
+          "bpm": 93,
+          "day": "Mie"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "day": "Jue"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "day": "Vie"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "day": "Sab"
+        },
+        {
+          "sys": 124,
+          "dia": 91,
+          "bpm": 89,
+          "day": "Dom"
+        }
+      ],
+      "sys_average": 192,
+      "dia_average": 135.5,
+      "interval": "week",
+      "start_interval": "15/02/2022"
+    },
+    "blood-pressure/:userid?interval=month&start_date=15/02/2022": {
+      "records": [
+        {
+          "sys": 121,
+          "dia": 95,
+          "bpm": 93,
+          "week": "week-1"
+        },
+        {
+          "sys": 130,
+          "dia": 98,
+          "bpm": 90,
+          "week": "week-2"
+        },
+        {
+          "sys": 110,
+          "dia": 85,
+          "bpm": 98,
+          "week": "week-3"
+        },
+        {
+          "sys": 127,
+          "dia": 87,
+          "bpm": 91,
+          "week": "week-4"
+        }
+      ],
+      "sys_average": 192,
+      "dia_average": 135.5,
+      "interval": "month",
+      "start_interval": "15/02/2022"
+    }
+  }
+}

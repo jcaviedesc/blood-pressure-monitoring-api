@@ -12,8 +12,8 @@ class UserCreate(CoreModelMixin, IDModelMixin, UserSchema):
     @validator("age", always=True)
     def calculate_age(cls, value: int, values: Dict) -> int:
         [day, month, year] = values["birthdate"].split("/")
-        time_difference = relativedelta(datetime.datetime.utcnow(
-        ), datetime.datetime(day=int(day), month=int(month), year=int(year)))
+        time_difference = relativedelta(datetime.datetime.utcnow(), datetime.datetime(
+            day=int(day), month=int(month), year=int(year)))
         difference_in_years = time_difference.years
         return difference_in_years
 

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Body, Depends
+from fastapi.responses import JSONResponse
 from starlette.status import HTTP_201_CREATED
 from app.dependencies.database import get_repository
 from .repository import UserRepository
@@ -16,4 +17,4 @@ async def create_user(
 ) -> UserPublic:
     user_encoder = UserCreate(**new_user.dict())
     created_user = await users_repo.create_user(user=user_encoder)
-    return created_user
+    return JSONResponse(status_code=HTTP_201_CREATED, content=created_user)
