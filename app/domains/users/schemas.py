@@ -1,5 +1,5 @@
-from typing import Optional
-from enum import Enum
+from typing import Optional, Dict
+from enum import Enum, IntEnum
 from pydantic import BaseModel, validator, Field
 
 
@@ -14,9 +14,9 @@ class SIsystemUnitEnum(str, Enum):
     kilogram = "Kg"
 
 
-class UserTypeEnum(str, Enum):
-    healt = "health professional"
-    normal = "normal"
+class UserTypeEnum(IntEnum):
+    health_professional = 1
+    normal = 2
 
 
 class HealthInfoEnum(str, Enum):
@@ -26,7 +26,7 @@ class HealthInfoEnum(str, Enum):
 
 
 class UnitModel(BaseModel):
-    val: int | float
+    val: float | int
     unit: SIsystemUnitEnum
 
 
@@ -44,12 +44,18 @@ class UserSchema(BaseModel):
     address: str
     location: Optional[str]
     gender: GenderEnum
-    birthdata: str
+    birthdate: str
     height: UnitModel
     weight: UnitModel
     user_type: UserTypeEnum
-    healt_info: Optional[HealthInfoModel]
+    health_info: Optional[HealthInfoModel]
     profile_url: Optional[str]
+
+    @validator("health_info")
+    def validate_health_info(cls, value, values: Dict):
+        if values["user_type"] == UserTypeEnum.health_professional and value is None:
+            raise ValueError("health_info is required")
+        return value
 
     class Config:
         schema_extra = {
@@ -58,7 +64,7 @@ class UserSchema(BaseModel):
                 "phone_number": "+57 3223456783",
                 "address": "calle 1234",
                 "gender": "M",
-                "birthdata": "09/01/1999",
+                "birthdate": "09/01/1999",
                 "height": {
                     "val": 1.80,
                     "unit": "m"
@@ -67,6 +73,6 @@ class UserSchema(BaseModel):
                     "val": 70,
                     "unit": "Kg"
                 },
-                "user_type": "health professional",
+                "user_type": 1,
             }
         }
