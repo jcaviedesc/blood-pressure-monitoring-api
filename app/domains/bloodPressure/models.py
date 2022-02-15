@@ -1,21 +1,20 @@
-from dataclasses import field
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, validator, Field, PositiveFloat
+from app.core.baseModel import IDModelMixin
 
 
 class BPMeasurementModel(BaseModel):
     sys: int = Field(..., gt=0)
     dia: int = Field(..., gt=0)
-    bpm: Optional[int] = Field(..., gt=0)
-    datetime: datetime = Field(...)
-    why: Optional[str]
-    
+    bpm: Optional[int]
+    datetime: datetime
 
 
-class BPrecordModel(BaseModel):
+class BPrecordModel(IDModelMixin):
     user_id: str
     records: list[BPMeasurementModel] = Field(..., min_items=1, max_items=2)
-    sys_average: float
-    dia_average: float
+    sys_avg: Optional[PositiveFloat]
+    dia_avg: Optional[PositiveFloat]
     timestamp: Optional[datetime]  # day/month/year
+    why: Optional[str]
