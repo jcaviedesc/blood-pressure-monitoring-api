@@ -39,29 +39,29 @@
           "sys": 130,
           "dia": 90,
           "bpm": 93,
-          "time": "9:50"
+          "datetime": "9:50"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "time": "9:55"
+          "datetime": "9:55"
         },
         {
           "sys": 130,
           "dia": 90,
           "bpm": 93,
-          "time": "16:30"
+          "datetime": "16:30"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "time": "16:33"
+          "datetime": "16:33"
         }
       ],
-      "sys_average-": 192,
-      "dia_average-": 135.5,
+      "sys_avg-": 192,
+      "dia_avg-": 135.5,
       "interval": "day",
       "timestamp": "15/02/2022"
     },
@@ -71,80 +71,48 @@
           "sys": 130,
           "dia": 90,
           "bpm": 93,
-          "day": "Lun"
+          "datetime": "Lun"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "day": "Mar"
+          "datetime": "Mar"
         },
         {
           "sys": 130,
           "dia": 90,
           "bpm": 93,
-          "day": "Mie"
+          "datetime": "Mie"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "day": "Jue"
+          "datetime": "Jue"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "day": "Vie"
+          "datetime": "Vie"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "day": "Sab"
+          "datetime": "Sab"
         },
         {
           "sys": 124,
           "dia": 91,
           "bpm": 89,
-          "day": "Dom"
+          "datetime": "Dom"
         }
       ],
-      "sys_average": 192,
-      "dia_average": 135.5,
+      "sys_avg": 192,
+      "dia_avg": 135.5,
       "interval": "week",
-      "start_interval": "15/02/2022"
-    },
-    "blood-pressure/:userid?interval=month&start_date=15/02/2022": {
-      "records": [
-        {
-          "sys": 121,
-          "dia": 95,
-          "bpm": 93,
-          "week": "week-1"
-        },
-        {
-          "sys": 130,
-          "dia": 98,
-          "bpm": 90,
-          "week": "week-2"
-        },
-        {
-          "sys": 110,
-          "dia": 85,
-          "bpm": 98,
-          "week": "week-3"
-        },
-        {
-          "sys": 127,
-          "dia": 87,
-          "bpm": 91,
-          "week": "week-4"
-        }
-      ],
-      "sys_average": 192,
-      "dia_average": 135.5,
-      "interval": "month",
       "start_interval": "15/02/2022"
     }
   }
