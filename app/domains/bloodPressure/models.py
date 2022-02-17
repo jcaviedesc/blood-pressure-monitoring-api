@@ -34,7 +34,7 @@ class BPRecordsModel(BPSchema):
     location: Optional[list[float]]
 
     def parse_datetime_to_day(self):
-        self.datetime = self.datetime.strftime("%a")
+        self.datetime = self.datetime.strftime("%Y-%m-%d")
         self.records = [record.parse_datetime_to_time()
                         for record in self.records]
 
