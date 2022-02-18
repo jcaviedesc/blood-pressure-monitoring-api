@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  tracking-bp-api:
+    build: .
+    restart: on-failure
+    ports:
+      - "8000:8000"
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: "/src/config/serviceAccountKey.json"
+    env_file:
+      - .env
