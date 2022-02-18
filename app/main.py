@@ -16,6 +16,6 @@ async def startup_db_client():
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    app.mongodb_client.close()
+    app.clientdb.close()
     
 app.include_router(api_router)

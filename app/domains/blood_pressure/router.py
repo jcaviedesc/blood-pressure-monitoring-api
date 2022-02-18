@@ -26,8 +26,7 @@ async def create_bp_record(
 @router.get("/user/{user_id}", response_model=list[BPRecordResponseModel], status_code=HTTP_201_CREATED)
 async def list_bp_records(
     user_id: str,
-    bp_repo: BPRepository = Depends(
-        get_repository(BPRepository)),
+    bp_repo: BPRepository = Depends(get_repository(BPRepository)),
     interval: IntervalEnum = IntervalEnum.day,
     start_date: date = date.today()
 ) -> BPRecordResponseModel:
