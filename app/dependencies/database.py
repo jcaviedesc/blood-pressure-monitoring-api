@@ -3,7 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from fastapi import Depends
 from starlette.requests import Request
-from app.db.repositoryBase import BaseRepository
+from ..db.repositoryBase import BaseRepository
 
 def get_database(request: Request) -> AsyncIOMotorDatabase:  
     return request.app.clientdb["TrackingBPdb"]  

@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 import datetime
 from pydantic import BaseModel, validator
 from .schemas import UserSchema, UnitModel
-from app.core.baseModel import CoreModelMixin, IDModelMixin
+from ...core.baseModel import CoreModelMixin, IDModelMixin
 
 
 class UserCreate(CoreModelMixin, IDModelMixin, UserSchema):

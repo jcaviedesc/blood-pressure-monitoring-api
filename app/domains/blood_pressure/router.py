@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.status import HTTP_201_CREATED, HTTP_200_OK
 from fastapi.encoders import jsonable_encoder
 import pandas as pd
-from app.dependencies.database import get_repository
+from ...dependencies.database import get_repository
 from .repository import BPRepository
 from .models import BPSchema, IntervalEnum, BPRecordResponseModel
 

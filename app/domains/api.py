@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.domains.users import router as user_router
-from app.domains.blood_pressure import router as bp_router
+from .users import router as user_router
+from .blood_pressure import router as bp_router
 
 
 router = APIRouter()

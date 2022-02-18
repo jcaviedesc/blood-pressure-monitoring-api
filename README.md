@@ -20,3 +20,17 @@ In the root directory run:
 ```bash
 $ uvicorn app.main:app --reload
 ```
+
+## Run test
+Use `pytest` and `coverage` for testing app.
+
+1. Run test with coverage
+```bash
+$ coverage run -m pytest
+```
+
+2. Generate html report
+
+```bash
+$ coverage html
+```

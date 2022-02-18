@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_201_CREATED
-from app.dependencies.database import get_repository
+from ...dependencies.database import get_repository
 from .repository import UserRepository
 from .schemas import UserSchema
 from .models import UserCreate, UserPublic

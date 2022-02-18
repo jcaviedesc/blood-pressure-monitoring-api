@@ -3,7 +3,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-from app.domains.api import router as api_router
+from .domains.api import router as api_router
 
 load_dotenv()
 

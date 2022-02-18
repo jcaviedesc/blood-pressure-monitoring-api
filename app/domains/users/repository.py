@@ -1,4 +1,4 @@
-from app.db.repositoryBase import BaseRepository
+from ...db.repositoryBase import BaseRepository
 from fastapi.encoders import jsonable_encoder
 from .models import UserCreate, UserInDB
 

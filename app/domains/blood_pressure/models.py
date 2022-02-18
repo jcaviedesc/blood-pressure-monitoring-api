@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 from pydantic import BaseModel, validator, Field, PositiveFloat
-from app.core.baseModel import IDModelMixin
+from ...core.baseModel import IDModelMixin
 
 
 class IntervalEnum(str, Enum):
