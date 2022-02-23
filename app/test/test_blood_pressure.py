@@ -1,6 +1,4 @@
 import pytest
-from app.domains.blood_pressure.repository import BPRepository
-
 
 @pytest.mark.asyncio
 async def test_list_bp_records(test_app):

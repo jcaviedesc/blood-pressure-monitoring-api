@@ -32,5 +32,5 @@ $ coverage run -m pytest
 2. Generate html report
 
 ```bash
-$ coverage html
+$ coverage html --omit="*/test*" -d tests/coverage
 ```
