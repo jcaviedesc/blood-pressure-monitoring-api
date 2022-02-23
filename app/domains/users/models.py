@@ -70,4 +70,6 @@ class UserInDB(CoreModelMixin, IDModelMixin):
 
 
 class UserPublic(IDModelMixin, UserModel):
+    age: Optional[int]
+    imc: Optional[PositiveFloat]
     pass

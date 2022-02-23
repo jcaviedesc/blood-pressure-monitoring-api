@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
-from starlette.status import HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_200_OK, HTTP_404_NOT_FOUND
 from fastapi.encoders import jsonable_encoder
 from firebase_admin import auth
 from ...dependencies.database import get_repository
-from ...dependencies.authorization import get_user
+from ...dependencies.authorization import get_user, get_active_user
+from ...core.responseModels import NotFoundResponse
 from .repository import UserRepository
 from .schemas import UserSchema
 from .models import UserCreate, UserPublic
@@ -30,3 +31,20 @@ async def create_user(
         photo_url=new_user.profile_url)
 
     return JSONResponse(status_code=HTTP_201_CREATED, content=jsonable_encoder(created_user, exclude_defaults=True, by_alias=False))
+
+
+@router.get("/{phone}", status_code=HTTP_200_OK)
+async def find_user(
+    phone: str,
+    users_repo: UserRepository = Depends(get_repository(UserRepository)),
+    user_token=Depends(get_active_user)
+) -> UserPublic:
+    # TODO handle access_authorization by permissions only the same user can access
+    # and user_type = 2 with authorization.
+    user = await users_repo.find_by_phone_number(phone_number=phone)
+    if user:
+        return JSONResponse(status_code=HTTP_200_OK, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
+    else:
+        not_found = NotFoundResponse(
+            'user with phone_number {} not found'.format(phone))
+        return JSONResponse(status_code=HTTP_404_NOT_FOUND, content=not_found.toJson())
