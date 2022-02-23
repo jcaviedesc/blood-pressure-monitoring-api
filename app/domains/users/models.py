@@ -1,28 +1,60 @@
-from typing import Optional, Dict
+from datetime import datetime, date
+from typing import Optional
 from dateutil.relativedelta import relativedelta
-import datetime
-from pydantic import BaseModel, validator
-from .schemas import UserSchema, UnitModel
+from pydantic import BaseModel, PositiveFloat
 from ...core.baseModel import CoreModelMixin, IDModelMixin
+from .enums import SIsystemUnitEnum, HealthInfoEnum, GenderEnum, UserTypeEnum
 
 
-class UserCreate(CoreModelMixin, IDModelMixin, UserSchema):
-    age: Optional[int]
 
-    @validator("age", always=True)
-    def calculate_age(cls, value: int, values: Dict) -> int:
-        [day, month, year] = values["birthdate"].split("/")
-        time_difference = relativedelta(datetime.datetime.utcnow(), datetime.datetime(
-            day=int(day), month=int(month), year=int(year)))
-        difference_in_years = time_difference.years
-        return difference_in_years
+class UnitModel(BaseModel):
+    val: float | int
+    unit: SIsystemUnitEnum
 
 
-class UserUpdate(BaseModel):
+class HealthInfoModel(BaseModel):
+    medicine: HealthInfoEnum
+    smoke: HealthInfoEnum
+    heartAttack: HealthInfoEnum
+    thrombosis: HealthInfoEnum
+    nephropathy: HealthInfoEnum
+
+class UserModel(BaseModel):
+    full_name: str
     phone_number: str
     address: str
     location: Optional[str]
+    gender: GenderEnum
+    birthdate: date
+    height: UnitModel
     weight: UnitModel
+    user_type: UserTypeEnum
+    health_info: Optional[HealthInfoModel]
+    profile_url: Optional[str]
+
+class UserCreate(CoreModelMixin, IDModelMixin, UserModel):
+    age: Optional[int]
+    imc: Optional[PositiveFloat]
+
+    def calculate_age(self):
+        time_difference = relativedelta(datetime.utcnow(), self.birthdate)
+        self.age = time_difference.years
+
+    def calculate_IMC(self):
+        # TODO use unit for calculate IMC in accordance to system unit
+        self.imc = round(self.weight.val / self.height.val**2, 2)
+
+    def calculate_vars(self):
+        self.calculate_age()
+        self.calculate_IMC()
+
+
+class UserUpdate(BaseModel):
+    phone_number: Optional[str]
+    address: Optional[str]
+    location: Optional[str]
+    height: Optional[UnitModel]
+    weight: Optional[UnitModel]
     profile_url: Optional[str]
 
 
@@ -37,5 +69,5 @@ class UserInDB(CoreModelMixin, IDModelMixin):
     user_type: str
 
 
-class UserPublic(IDModelMixin, UserSchema):
+class UserPublic(IDModelMixin, UserModel):
     pass
