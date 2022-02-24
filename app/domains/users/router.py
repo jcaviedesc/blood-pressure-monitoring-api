@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Query
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_201_CREATED, HTTP_200_OK, HTTP_404_NOT_FOUND
 from fastapi.encoders import jsonable_encoder
@@ -6,9 +6,10 @@ from firebase_admin import auth
 from ...dependencies.database import get_repository
 from ...dependencies.authorization import get_user, get_active_user
 from ...core.responseModels import NotFoundResponse
+from ...core.enums import PageLimitEnum
 from .repository import UserRepository
 from .schemas import UserSchema
-from .models import UserCreate, UserPublic
+from .models import UserCreate, UserPublic, GenderEnum
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -48,3 +49,15 @@ async def find_user(
         not_found = NotFoundResponse(
             'user with phone_number {} not found'.format(phone))
         return JSONResponse(status_code=HTTP_404_NOT_FOUND, content=not_found.toJson())
+
+
+@router.get("/", status_code=HTTP_200_OK)
+async def filter_users_list(
+    q: str = Query(..., max_length=128),
+    age: int = Query(None, ge=0),
+    gender: GenderEnum = None,
+    page: int = 1,
+    limit: PageLimitEnum = PageLimitEnum.small
+):
+    # TODO implement 
+    return {q, age, gender, page, limit}
