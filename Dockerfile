@@ -7,7 +7,7 @@ COPY ./requirements.txt /src/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /src/requirements.txt
 
 COPY ./app /src/app
-# COPY ./config /src/config
+COPY ./config /src/config
 
 EXPOSE 8000
 # run container
