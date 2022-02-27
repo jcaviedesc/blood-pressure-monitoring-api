@@ -31,7 +31,8 @@ class AppSettings(BaseSettings):
         
     class Config:
         validate_assignment = True
-        env_file = ".env"
+        # Comment on production
+        # env_file = ".env"
 
     @property
     def fastapi_kwargs(self) -> Dict[str, Any]:
