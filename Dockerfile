@@ -1,6 +1,9 @@
 FROM python:3.10.2-slim
 
 WORKDIR /src
+ARG DATABASE_CONNECTION_URI
+ARG DATABASE_NAME
+ARG GOOGLE_APPLICATION_CREDENTIALS
 
 COPY ./requirements.txt /src/requirements.txt
 
