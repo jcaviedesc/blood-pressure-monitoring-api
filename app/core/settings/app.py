@@ -30,7 +30,7 @@ class AppSettings(BaseSettings):
     loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
         
     class Config:
-        validate_assignment = True
+        validate_assignment = False
         # Comment on production
         # env_file = ".env"
 
