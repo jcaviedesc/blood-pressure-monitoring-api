@@ -8,6 +8,8 @@ RUN pip install --no-cache-dir --upgrade -r /src/requirements.txt
 
 COPY ./app /src/app
 COPY ./config /src/config
+COPY ./build-envfile /src
+RUN ./build-envfile
 
 EXPOSE 8000
 # run container
