@@ -25,11 +25,16 @@ async def create_user(
     user_encoder.calculate_vars()
     created_user = await users_repo.create_user(user=user_encoder)
 
-    # TODO handle error
-    auth.update_user(
-        user_token['uid'],
-        display_name=new_user.full_name,
-        photo_url=new_user.profile_url)
+    try:
+        params = {"display_name": created_user.full_name}
+        if (profile_url := created_user.profile_url) is not None:
+            params["photo_url"] = profile_url
+
+        auth.update_user(user_token['uid'], **params)
+    except ValueError as err:
+        # Panic send report for reprosed updated user
+        print("There was a error updating user with ID {} in the auth provider".format(create_user.id))
+        print(err)
 
     return JSONResponse(status_code=HTTP_201_CREATED, content=jsonable_encoder(created_user, exclude_defaults=True, by_alias=False))
 
@@ -59,5 +64,5 @@ async def filter_users_list(
     page: int = 1,
     limit: PageLimitEnum = PageLimitEnum.small
 ):
-    # TODO implement 
+    # TODO implement
     return {q, age, gender, page, limit}

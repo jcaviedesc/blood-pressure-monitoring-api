@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from typing import Optional
 from dateutil.relativedelta import relativedelta
-from pydantic import BaseModel, PositiveFloat
+from pydantic import BaseModel, Field, PositiveFloat
 from ...core.baseModel import CoreModelMixin, IDModelMixin
 from .enums import SIsystemUnitEnum, HealthInfoEnum, GenderEnum, UserTypeEnum
 
@@ -23,7 +23,7 @@ class UserModel(BaseModel):
     full_name: str
     phone_number: str
     address: str
-    location: Optional[str]
+    location: Optional[list[int]] = Field(None, max_items=2, min_items=2)
     gender: GenderEnum
     birthdate: date
     height: UnitModel
