@@ -7,7 +7,7 @@ class UserSchema(UserModel):
 
     @validator("health_info", always=True)
     def validate_health_info(cls, value, values: Dict):
-        if values["user_type"] == UserTypeEnum.health_professional and value is None:
+        if values["user_type"] == UserTypeEnum.normal and value is None:
             raise ValueError("health_info is required")
         return value
 

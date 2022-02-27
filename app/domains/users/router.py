@@ -15,7 +15,7 @@ from .models import UserCreate, UserPublic, GenderEnum
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/", response_model=UserCreate, status_code=HTTP_201_CREATED)
+@router.post("", response_model=UserCreate, status_code=HTTP_201_CREATED)
 async def create_user(
     new_user: UserSchema = Body(...),
     users_repo: UserRepository = Depends(get_repository(UserRepository)),
@@ -51,7 +51,7 @@ async def find_user(
         return JSONResponse(status_code=HTTP_404_NOT_FOUND, content=not_found.toJson())
 
 
-@router.get("/", status_code=HTTP_200_OK)
+@router.get("", status_code=HTTP_200_OK)
 async def filter_users_list(
     q: str = Query(..., max_length=128),
     age: int = Query(None, ge=0),

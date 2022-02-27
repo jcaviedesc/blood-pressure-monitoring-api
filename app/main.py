@@ -13,6 +13,7 @@ app = FastAPI()
 async def startup_db_client():
     app.clientdb = AsyncIOMotorClient(os.getenv("DATABASE_CONNECTION_URI"))
     app.database = app.clientdb[os.getenv("DATABASE_NAME")]
+    print("start blood pressure Api Ok..")
 
 
 @app.on_event("shutdown")
