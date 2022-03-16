@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Depends, Query
 from fastapi.responses import JSONResponse
+from loguru import logger
 from starlette.status import HTTP_201_CREATED, HTTP_200_OK, HTTP_404_NOT_FOUND
 from fastapi.encoders import jsonable_encoder
 from firebase_admin import auth
@@ -33,8 +34,8 @@ async def create_user(
         auth.update_user(user_token['uid'], **params)
     except ValueError as err:
         # Panic send report for reprosed updated user
-        print("There was a error updating user with ID {} in the auth provider".format(create_user.id))
-        print(err)
+        logger.info("There was a error updating user with ID {} in the auth provider".format(created_user.id))
+        logger.error(err)
 
     return JSONResponse(status_code=HTTP_201_CREATED, content=jsonable_encoder(created_user, exclude_defaults=True, by_alias=False))
 

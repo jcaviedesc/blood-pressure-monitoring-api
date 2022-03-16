@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from typing import Optional
 from dateutil.relativedelta import relativedelta
-from pydantic import BaseModel, Field, PositiveFloat
+from pydantic import BaseModel, Field, PositiveFloat, HttpUrl
 from ...core.baseModel import CoreModelMixin, IDModelMixin
 from .enums import SIsystemUnitEnum, HealthInfoEnum, GenderEnum, UserTypeEnum
 
@@ -30,7 +30,7 @@ class UserModel(BaseModel):
     weight: UnitModel
     user_type: UserTypeEnum
     health_info: Optional[HealthInfoModel]
-    profile_url: Optional[str]
+    profile_url: Optional[HttpUrl]
 
 class UserCreate(CoreModelMixin, IDModelMixin, UserModel):
     age: Optional[int]
