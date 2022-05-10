@@ -42,7 +42,9 @@ class UserCreate(CoreModelMixin, IDModelMixin, UserModel):
 
     def calculate_IMC(self):
         # TODO use unit for calculate IMC in accordance to system unit
-        self.imc = round(self.weight.val / self.height.val**2, 2)
+        # Fórmula: peso (kg) / [estatura (m)]2
+        meters_to_cm = self.height.val / 100
+        self.imc = round(self.weight.val / meters_to_cm**2, 2)
 
     def calculate_vars(self):
         self.calculate_age()
