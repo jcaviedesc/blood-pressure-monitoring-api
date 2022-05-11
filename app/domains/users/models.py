@@ -2,37 +2,60 @@ from datetime import datetime, date
 from typing import Optional
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, Field, PositiveFloat, HttpUrl
-from ...core.baseModel import CoreModelMixin, IDModelMixin
-from .enums import SIsystemUnitEnum, HealthInfoEnum, GenderEnum, UserTypeEnum
+from ...core.baseModel import DatatimeModelMixin, IDModelMixin
+from .enums import SIsystemUnitEnum, HealthInfoEnum, GenderEnum, UserTypeEnum, AsystemUnitEnum
 
+
+class InitialUserCreateModel(BaseModel):
+    full_name: str = Field(..., alias="fName")
+    # documento de identificación ej cedula de ciudadania
+    doc_id: str = Field(..., alias="docId")
+    phone: str
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class IntitalUserCreate(InitialUserCreateModel, DatatimeModelMixin, IDModelMixin):
+    is_complete: Optional[bool] = Field(default=False, alias="isC")
 
 
 class UnitModel(BaseModel):
-    val: float | int
-    unit: SIsystemUnitEnum
+    val: float | int = Field(..., alias="v")
+    unit: SIsystemUnitEnum | AsystemUnitEnum = Field(..., alias="u")
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class HealthInfoModel(BaseModel):
-    medicine: HealthInfoEnum
-    smoke: HealthInfoEnum
-    heartAttack: HealthInfoEnum
-    thrombosis: HealthInfoEnum
-    nephropathy: HealthInfoEnum
+    medicine: HealthInfoEnum = Field(..., alias="med")
+    smoke: HealthInfoEnum = Field(..., alias="smo")
+    heart_attack: HealthInfoEnum = Field(..., alias="heaAtt")
+    thrombosis: HealthInfoEnum = Field(..., alias="thr")
+    nephropathy: HealthInfoEnum = Field(..., alias="nep")
+
+    class Config:
+        allow_population_by_field_name = True
+
 
 class UserModel(BaseModel):
-    full_name: str
-    phone_number: str
     address: str
     location: Optional[list[int]] = Field(None, max_items=2, min_items=2)
     gender: GenderEnum
     birthdate: date
     height: UnitModel
     weight: UnitModel
-    user_type: UserTypeEnum
-    health_info: Optional[HealthInfoModel]
-    profile_url: Optional[HttpUrl]
+    user_type: UserTypeEnum = Field(..., alias="utype")
+    health_info: Optional[HealthInfoModel] = Field(None, alias="healthI")
+    avatar: Optional[HttpUrl] = Field(None, alias="avatar")
 
-class UserCreate(CoreModelMixin, IDModelMixin, UserModel):
+    class Config:
+        allow_population_by_field_name = True
+        extra = 'allow'
+
+
+class UserCreate(UserModel):
     age: Optional[int]
     imc: Optional[PositiveFloat]
 
@@ -43,35 +66,28 @@ class UserCreate(CoreModelMixin, IDModelMixin, UserModel):
     def calculate_IMC(self):
         # TODO use unit for calculate IMC in accordance to system unit
         # Fórmula: peso (kg) / [estatura (m)]2
-        meters_to_cm = self.height.val / 100
-        self.imc = round(self.weight.val / meters_to_cm**2, 2)
+        height = self.height.val
+        if self.height.unit == AsystemUnitEnum.centimeter:
+            height = self.height.val / 100
+        self.imc = round(self.weight.val / height**2, 2)
 
     def calculate_vars(self):
         self.calculate_age()
         self.calculate_IMC()
 
+    def set_is_complete(self):
+        self.isC = True
+
 
 class UserUpdate(BaseModel):
-    phone_number: Optional[str]
+    phone: Optional[str]
     address: Optional[str]
-    location: Optional[str]
+    location: Optional[list[int]] = Field(None, max_items=2, min_items=2)
+    gender: Optional[GenderEnum]
+    birthdate: Optional[date]
     height: Optional[UnitModel]
     weight: Optional[UnitModel]
     profile_url: Optional[str]
 
-
-class UserInDB(CoreModelMixin, IDModelMixin):
-    full_name: str
-    phone_number: str
-    address: str
-    gender: str
-    birthdate: str
-    height: UnitModel
-    weight: UnitModel
-    user_type: str
-
-
-class UserPublic(IDModelMixin, UserModel):
-    age: Optional[int]
-    imc: Optional[PositiveFloat]
+class UserPublic(IDModelMixin, InitialUserCreateModel, UserCreate):
     pass

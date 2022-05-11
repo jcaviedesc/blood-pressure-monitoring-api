@@ -10,13 +10,19 @@ class SIsystemUnitEnum(str, Enum):
     metre = "m"
     kilogram = "Kg"
 
+class AsystemUnitEnum(str, Enum):
+    centimeter = 'cm'
+
 
 class UserTypeEnum(IntEnum):
     health_professional = 1
-    normal = 2
+    patient = 2
 
 
 class HealthInfoEnum(str, Enum):
     yes = "Y"
     no = "N"
     not_know = "NK"
+
+class FindUserActions(str,Enum):
+    is_new = 'isNew'

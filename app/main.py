@@ -1,3 +1,4 @@
+import os
 import uvicorn
 from loguru import logger
 from fastapi import FastAPI
@@ -7,6 +8,7 @@ from .domains.api import router as api_router
 from .core.config import get_settings
 
 settings = get_settings()
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = settings.google_application_credentials
 settings.configure_logging()
 
 app = FastAPI(**settings.fastapi_kwargs)

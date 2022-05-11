@@ -1,21 +1,29 @@
 from typing import Dict
 from pydantic import validator
-from .models import UserModel, UserTypeEnum
+from .models import UserModel, UserTypeEnum, InitialUserCreateModel
+
+
+class InitialUserSchema(InitialUserCreateModel):
+    class Config:
+        schema_extra = {
+            "example": {
+                "full_name": "Diego Pardo",
+                "doc_id": "12444514",
+                "phone": "+573223456783",
+            }
+        }
 
 
 class UserSchema(UserModel):
-
     @validator("health_info", always=True)
     def validate_health_info(cls, value, values: Dict):
-        if values["user_type"] == UserTypeEnum.normal and value is None:
+        if values["user_type"] == UserTypeEnum.patient and value is None:
             raise ValueError("health_info is required")
         return value
 
     class Config:
         schema_extra = {
             "example": {
-                "full_name": "Diego Pardo",
-                "phone_number": "+57 3223456783",
                 "address": "calle 1234",
                 "gender": "M",
                 "birthdate": "1999-01-23",

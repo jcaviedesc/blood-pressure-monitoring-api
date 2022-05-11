@@ -1,19 +1,37 @@
 import datetime
-import uuid
+from typing import Optional
+from bson import ObjectId
 from pydantic import BaseModel, validator, Field
 
 
-class CoreModelMixin(BaseModel):
-    created_at: datetime.datetime = None  # type: ignore
-    updated_at: datetime.datetime = None  # type: ignore
+class DatatimeModelMixin(BaseModel):
+    created_at: datetime.datetime = Field(None, alias="crAt")  # type: ignore
+    updated_at: datetime.datetime = Field(None, alias="upAt")  # type: ignore
 
     @validator("created_at", "updated_at", pre=True, always=True)
     def default_datetime(cls, value: int) -> datetime.datetime:
         return datetime.datetime.utcnow()
 
 
+class PyObjectId(ObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid objectid")
+        return ObjectId(v)
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
+
 class IDModelMixin(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
     class Config:
         allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
