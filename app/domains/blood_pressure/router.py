@@ -18,7 +18,7 @@ async def create_bp_record(
     BPrecord: BPSchema = Body(...),
     bp_repo: BPRepository = Depends(
         get_repository(BPRepository))
-) -> BPSchema:
+) -> JSONResponse:
     created_BPrecord = await bp_repo.insert(new_record=BPrecord)
     return JSONResponse(status_code=HTTP_201_CREATED, content=jsonable_encoder(created_BPrecord, exclude_defaults=True))
 
@@ -29,7 +29,7 @@ async def list_bp_records(
     bp_repo: BPRepository = Depends(get_repository(BPRepository)),
     interval: IntervalEnum = IntervalEnum.day,
     start_date: date = date.today()
-) -> BPRecordResponseModel:
+) -> JSONResponse:
     records_db = await bp_repo.get_records(user_id=user_id, start_date=start_date, interval=interval)
     result = {}
     if interval == IntervalEnum.day:

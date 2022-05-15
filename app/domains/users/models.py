@@ -15,7 +15,7 @@ class InitialUserCreateModel(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
-
+#TODO revisar porque no devuelve is_complete?
 class IntitalUserCreate(InitialUserCreateModel, DatatimeModelMixin, IDModelMixin):
     is_complete: Optional[bool] = Field(default=False, alias="isC")
 

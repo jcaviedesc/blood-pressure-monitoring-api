@@ -28,8 +28,8 @@ async def create_user(
         try:
             user = auth.create_user(
                 phone_number=new_user.phone,
-                display_name=new_user.full_name,
-                disabled=True)
+                display_name=new_user.full_name)
+            auth.set_custom_user_claims(user.uid, {'isC': False})
             logger.info("user {} created in fba".format(user.uid))
         except Exception as fba_err:
             logger.error(fba_err)
@@ -63,6 +63,7 @@ async def complete_create_user(
             if (profile_url := user_updated.avatar) is not None:
                 params["photo_url"] = profile_url
             auth.update_user(user_token['uid'], **params)
+            auth.set_custom_user_claims(user_token['uid'], {'isC': True})
         except ValueError as err:
             # Panic send report for reprosed updated user
             logger.info("There was a error updating user with ID {} in the auth provider".format(
