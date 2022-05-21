@@ -1,5 +1,4 @@
 from datetime import date
-from functools import reduce
 from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_201_CREATED, HTTP_200_OK
@@ -8,6 +7,7 @@ import pandas as pd
 from ...dependencies.database import get_repository
 from .repository import BPRepository
 from .models import BPSchema, IntervalEnum, BPRecordResponseModel
+from .monitor import router as monitor_router
 
 
 router = APIRouter(prefix="/blood-pressure", tags=["Blood pressure"])
@@ -54,3 +54,5 @@ async def list_bp_records(
             records=records, interval=interval, **records_mean)
 
     return JSONResponse(status_code=HTTP_200_OK, content=jsonable_encoder(result, exclude_defaults=True))
+
+router.include_router(monitor_router.router)
