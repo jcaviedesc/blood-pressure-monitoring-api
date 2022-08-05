@@ -1,6 +1,6 @@
 from typing import Optional
 from ...db.repositoryBase import BaseRepository
-from ...db.projections import excluded_fields_base, make_excluded_fields
+from ...db.projections import make_excluded_fields
 from fastapi.encoders import jsonable_encoder
 from .models import IntitalUserCreate, UserPublic, UserCreate, UserUpdate
 
