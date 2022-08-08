@@ -5,6 +5,6 @@ class PageLimitEnum(IntEnum):
     medium = 18
     large = 27
 
-class usersTypesEnum(Enum, str):
+class usersTypesEnum(str, Enum):
     PATIENT = "patient"
     PROFESSIONAL = "professional"

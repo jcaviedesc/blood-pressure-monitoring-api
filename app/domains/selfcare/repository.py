@@ -25,7 +25,7 @@ class SelfcareRepository(BaseRepository):
         return SelfcarePublicModel(**selfcare_tip) if selfcare_tip is not None else None
 
     async def search_selfcare(self, *, query: str, to: str, limit: int):
-        path_user = 'editor.patient' if to is 'patient' else 'editor.professional'
+        path_user = 'editor.patient' if to == 'patient' else 'editor.professional'
         pipeline = [
             {
                 '$search': {
