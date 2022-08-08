@@ -50,7 +50,7 @@ async def search_blood_pressure_monitor(q: str = '', lang: str = 'es'):
             monitor = {
                 'brand': brand,
                 'model': model,
-                'measurement_site ': location,
+                'measurement_site': location,
                 'use': use,
                 'validation_study': validation_study,
                 'img': img,

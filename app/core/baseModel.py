@@ -1,5 +1,5 @@
+from curses.ascii import US
 import datetime
-from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, validator, Field
 
@@ -28,6 +28,7 @@ class PyObjectId(ObjectId):
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
 
+
 class IDModelMixin(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
 
@@ -35,3 +36,16 @@ class IDModelMixin(BaseModel):
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+
+
+class User(BaseModel):
+    name: str
+    avatar: str
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+
+
+class OwnerMixin(BaseModel):
+    owner: User = User(name="", avatar="")
+
+    def add_user(self, user: User):
+        self.owner = user
