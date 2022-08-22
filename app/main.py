@@ -8,7 +8,7 @@ from .domains.api import router as api_router
 from .core.config import get_settings
 
 settings = get_settings()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = settings.google_application_credentials
+os.environ["GOOGLE_APPLICATION_CREDENTIALS_PATH"] = settings.google_application_credentials_path
 settings.configure_logging()
 
 app = FastAPI(**settings.fastapi_kwargs)

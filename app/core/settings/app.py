@@ -19,7 +19,7 @@ class AppSettings(BaseSettings):
     version: str = "0.1.0"
 
     # secret_key: SecretStr
-    google_application_credentials: str
+    google_application_credentials_path: str
 
     database_connection_uri: str
     database_name: str
