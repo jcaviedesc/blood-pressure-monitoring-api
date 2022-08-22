@@ -14,21 +14,28 @@ async def get_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_
             headers={'WWW-Authenticate': 'Bearer realm="auth_required"'},
         )
     try:
-        decoded_token = auth.verify_id_token(cred.credentials)
-    except Exception as err:
+        decoded_token = auth.verify_id_token(cred.credentials, check_revoked=True)
+    except ValueError as err:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid authentication credentials. {err}",
             headers={'WWW-Authenticate': 'Bearer error="invalid_token"'},
         )
+    except auth.ExpiredIdTokenError as err:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"{err}",
+            headers={'WWW-Authenticate': 'Bearer error="expired_token"'},
+        )
+    except Exception as err:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"{err}",
+            headers={'WWW-Authenticate': 'Bearer error="invalid_token"'},
+        )
     return decoded_token
 
 
-def get_active_user(current_user=Depends(get_user)):
-    user = auth.get_user(current_user['uid'])
-    if user.disabled:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Inactive user",
-        )
-    return current_user
+def get_user_with_claims(current_user=Depends(get_user)):
+    user = auth.get_user(current_user.get('uid'))
+    return user

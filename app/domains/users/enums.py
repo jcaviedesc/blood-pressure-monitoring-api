@@ -26,3 +26,8 @@ class HealthInfoEnum(str, Enum):
 
 class FindUserActions(str,Enum):
     is_new = 'isNew'
+
+class CardiovascularRiskOption(str, Enum):
+    HIGHT = 'hight'
+    MEDIUM = 'medium'
+    LOW = 'LOW'

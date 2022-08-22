@@ -41,11 +41,11 @@ class IDModelMixin(BaseModel):
 class User(BaseModel):
     name: str
     avatar: str
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: PyObjectId = Field(..., alias="_id")
 
 
 class OwnerMixin(BaseModel):
-    owner: User = User(name="", avatar="")
+    owner: User
 
     def add_user(self, user: User):
         self.owner = user
