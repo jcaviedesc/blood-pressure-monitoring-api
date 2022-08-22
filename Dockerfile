@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir --upgrade -r /src/requirements.txt
 
 COPY ./app /src/app
 COPY ./pre-build /src
+
 RUN mkdir -p /src/config
 RUN echo ${DATABASE_CONNECTION_URI}
 RUN ./pre-build
