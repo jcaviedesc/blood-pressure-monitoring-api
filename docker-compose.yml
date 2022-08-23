@@ -7,6 +7,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS_PATH: "/src/config/tracking-blood-pressure-fa7d5b0b3e2a.json"
+      GOOGLE_APPLICATION_CREDENTIALS: "/src/config/tracking-blood-pressure-fa7d5b0b3e2a.json"
     env_file:
       - .env
