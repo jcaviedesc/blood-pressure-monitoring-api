@@ -6,6 +6,7 @@ ARG DATABASE_NAME sometingx2
 ARG GOOGLE_APPLICATION_CREDENTIALS_PATH somewhere
 ARG GOOGLE_APPLICATION_CREDENTIALS somewhere1
 
+RUN echo "GOOGLE_APPLICATION_CREDENTIALS_PATH = ${GOOGLE_APPLICATION_CREDENTIALS_PATH}"
 COPY ./requirements.txt /src/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /src/requirements.txt
