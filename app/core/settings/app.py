@@ -15,7 +15,7 @@ class AppSettings(BaseSettings):
     openapi_prefix: str = ""
     openapi_url: str = "/openapi.json"
     redoc_url: str = "/redoc"
-    title: str = "Awesome Healtcare Bettion API"
+    title: str = "Awesome Healthcare Api - Bettion"
     version: str = "0.1.0"
 
     # secret_key: SecretStr

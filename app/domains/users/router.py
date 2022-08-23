@@ -36,7 +36,6 @@ async def create_user(
         raise RequestValidationError(errors=err.raw_errors)
 
     user.calculate_age().calculate_IMC()
-    print(user.dict())
     user_created = await users_repo.create_user(user=user)
 
     if user_created:
@@ -53,7 +52,7 @@ async def create_user(
             auth.set_custom_user_claims(
                 uid_user, {"isRegistered": True, "ref": str(user_created.id)})
 
-            logger.info("user {} updated".format(uid_user))
+            logger.info("auth user {} updated".format(uid_user))
         except Exception as fba_err:
             logger.error(fba_err)
 

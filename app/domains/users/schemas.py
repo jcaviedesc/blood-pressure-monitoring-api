@@ -38,7 +38,7 @@ class UserBaseSchema(BaseModel):
     occupation: str = Field(None, min_length=3)
     role: UserTypeEnum = Field(...)
     avatar: Optional[HttpUrl] = Field(None, alias="avatar")
-    health_questions: HealthQuestionsModel = Field(..., alias="questions")
+    health_questions: Optional[HealthQuestionsModel] = Field(None, alias="questions")
 
     class Config:
         allow_population_by_field_name = True
