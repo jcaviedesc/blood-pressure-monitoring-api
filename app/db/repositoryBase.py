@@ -1,8 +1,7 @@
-from enum import Enum
 from typing import Literal
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
-ENTITY = Literal['SelfcareTips', 'Users', 'BloodPressureMeasurements']
+ENTITY = Literal['SelfcareTips', 'Users', 'BloodPressureMeasurements', 'Devices']
 class BaseRepository:
     def __init__(self, db: AsyncIOMotorDatabase) -> None:
         self._db = db

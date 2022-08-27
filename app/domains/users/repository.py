@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 from bson import ObjectId
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
@@ -11,7 +11,7 @@ class UserRepository(BaseRepository):
     All database actions associated with the User resource
     """
     async def create_user(self, *, user: PatientUserCreate | ProfessionalUserCreate, exclude_fields: Optional[list[str]] = None) -> UserCreatedModel | None:
-        """returns a UserCreatedModel if insert into database is succesfull otherwise None.
+        """return a UserCreatedModel if insert into database is succesfull otherwise None.
         """
         user_body = jsonable_encoder(
             user, by_alias=True, exclude_none=True)
@@ -34,14 +34,34 @@ class UserRepository(BaseRepository):
         where size of each page is `page_size`.
         """
         # Calculate number of documents to skip
+        print(professional_id)
         skips = page_size * (page_num - 1)
         query = {
-            "linked_professionals": professional_id,
+            'linked_professionals': professional_id,
         }
         projection = make_excluded_fields()
-        cursor = await self.get_entity('Users').find(query, projection).skip(skips).limit(page_size)
+        cursor = self.get_entity('Users').find(query, projection).skip(skips).limit(page_size)
 
-        return [UserCreatedModel(**patient) for patient in cursor]
+        patients =[]
+        for document in await cursor.to_list(length=page_size):
+            patients.append(UserCreatedModel(**document))
+
+        return patients
+
+    async def set_user_device_token(self, *, user_id: str, token: str) -> Literal['success', 'failed']:
+        update_token = await self.get_entity('Devices').update_one(
+            {"user_id": user_id},
+            {
+                '$set': {
+                    "token": token
+                },
+                '$currentDate': {'utd_at': True}
+            },
+            upsert=True)
+        if update_token.modified_count > 0 or not update_token.upserted_id is None:
+            return "success"
+        else:
+            return "failed"
 
     # async def update_user(self, *, user: UserCreate | UserUpdate, user_id: str, exclude_fields: Optional[list[str]] = None) -> UserPublic | None:
     #     user_body = jsonable_encoder(user, by_alias=True)

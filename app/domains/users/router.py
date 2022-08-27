@@ -140,3 +140,20 @@ async def get_patients_by_professional(
         content=jsonable_encoder(
             patiens, exclude_defaults=True, by_alias=False)
     )
+
+@router.put("/{user_id}/device-token")
+async def set_device_token(
+    user_id: str,
+    token: str = Body(...),
+    auth_user=Depends(get_user_with_claims),
+    users_repo: UserRepository = Depends(get_repository(UserRepository))
+):
+    if auth_user.custom_claims.get('ref') != user_id:
+        raise HTTPException(status_code=401, detail="User has not authorized")
+
+    response = await users_repo.set_user_device_token(user_id=user_id, token=token)
+    # TODO add validator or errro handlers
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=response)
+        
