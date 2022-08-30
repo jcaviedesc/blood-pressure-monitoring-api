@@ -39,3 +39,11 @@ async def get_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_
 def get_user_with_claims(current_user=Depends(get_user)):
     user = auth.get_user(current_user.get('uid'))
     return user
+
+def get_professional_user(user=Depends(get_user_with_claims)):
+    if not user.custom_claims.get('role', -1) == 1:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Sorry! user is not authorized",
+        )
+    return user

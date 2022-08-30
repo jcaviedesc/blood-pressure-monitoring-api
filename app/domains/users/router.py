@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
 from app.domains.users.enums import UserTypeEnum
 from ...dependencies.database import get_repository
-from ...dependencies.authorization import get_user, get_user_with_claims
+from ...dependencies.authorization import get_user, get_user_with_claims, get_professional_user
 from ...core.responseModels import NotFoundResponse
 from ...core.enums import PageLimitEnum
 from .repository import UserRepository
@@ -28,15 +28,20 @@ async def create_user(
     user = {}
     try:
         if new_user.role == UserTypeEnum.patient:
+            questions = new_user.dict().get('health_questions', {})
             user = PatientUserCreate(**new_user.dict())
-            user.set_cardiovascular_risk()
+            user.set_cardiovascular_risk(questions)
         else:
             user = ProfessionalUserCreate(**new_user.dict())
     except ValidationError as err:
         raise RequestValidationError(errors=err.raw_errors)
 
-    user.calculate_age().calculate_IMC()
+    user.calculate_age()
+    user.calculate_body_mass_index(height=new_user.height, weight=new_user.weight).set_initial_measurements(height=new_user.height, weight=new_user.weight)
+    
     user_created = await users_repo.create_user(user=user)
+    # TODO crear un servicio asyncrono que guarde las respuestas del usuario y no
+    # consuma CPU y tiempo. Quisa con background task de fastapis
 
     if user_created:
         try:
@@ -47,10 +52,9 @@ async def create_user(
                 params["photo_url"] = profile_url
 
             uid_user = auth_user.get('uid')
-            print(uid_user, auth_user)
             auth.update_user(uid_user, **params)
             auth.set_custom_user_claims(
-                uid_user, {"isRegistered": True, "ref": str(user_created.id)})
+                uid_user, {"isRegistered": True, "ref": str(user_created.id), "role": user_created.role})
 
             logger.info("auth user {} updated".format(uid_user))
         except Exception as fba_err:
@@ -99,23 +103,6 @@ async def create_user(
 #         return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content={"msg": "User already register"})
 
 
-# @router.get("/{phone}", status_code=status.HTTP_200_OK)
-# async def find_user(
-#     phone: str,
-#     users_repo: UserRepository = Depends(get_repository(UserRepository)),
-#     user_token=Depends(get_user),
-#     action: str | None = None
-# ) -> JSONResponse:
-#     # TODO handle access_authorization by permissions only the same user can access
-#     # and user_type = 2 with authorization.
-#     user = await users_repo.find_by_phone_number(phone_number=phone)
-#     if user:
-#         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
-#     else:
-#         not_found = NotFoundResponse(
-#             'user with phone_number {} not found'.format(phone))
-#         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content=not_found.toJson())
-
 
 @router.get("", status_code=status.HTTP_200_OK)
 async def filter_users_list(
@@ -136,3 +123,37 @@ async def get_user_info(auth_user=Depends(get_user_with_claims), users_repo: Use
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
     else:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+@router.get("/professionals/patients")
+async def get_patients_by_professional(
+        auth_professional_user=Depends(get_professional_user),
+        users_repo: UserRepository = Depends(get_repository(UserRepository)),
+        page: int = Query(..., ge=1),
+        limit: PageLimitEnum = PageLimitEnum.small
+    ):
+    user_id = auth_professional_user.custom_claims.get('ref')
+    patiens = await users_repo.get_patients(professional_id=user_id, page_num=page, page_size=limit)
+
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content=jsonable_encoder(
+            patiens, exclude_defaults=True, by_alias=False)
+    )
+
+@router.put("/{user_id}/device-token")
+async def set_device_token(
+    user_id: str,
+    token: str = Body(...),
+    auth_user=Depends(get_user_with_claims),
+    users_repo: UserRepository = Depends(get_repository(UserRepository))
+):
+    if auth_user.custom_claims.get('ref') != user_id:
+        raise HTTPException(status_code=401, detail="User has not authorized")
+
+    response = await users_repo.set_user_device_token(user_id=user_id, token=token)
+    # TODO add validator or errro handlers
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content=response)
+        

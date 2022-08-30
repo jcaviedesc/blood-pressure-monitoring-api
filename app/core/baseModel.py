@@ -5,8 +5,8 @@ from pydantic import BaseModel, validator, Field
 
 
 class DatatimeModelMixin(BaseModel):
-    created_at: datetime.datetime = Field(None, alias="crAt")  # type: ignore
-    updated_at: datetime.datetime = Field(None, alias="upAt")  # type: ignore
+    created_at: datetime.datetime = Field(None, alias="ctd_at")  # type: ignore
+    updated_at: datetime.datetime = Field(None, alias="utd_at")  # type: ignore
 
     @validator("created_at", "updated_at", pre=True, always=True)
     def default_datetime(cls, value: int) -> datetime.datetime:

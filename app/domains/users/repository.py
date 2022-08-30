@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 from bson import ObjectId
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
@@ -11,7 +11,10 @@ class UserRepository(BaseRepository):
     All database actions associated with the User resource
     """
     async def create_user(self, *, user: PatientUserCreate | ProfessionalUserCreate, exclude_fields: Optional[list[str]] = None) -> UserCreatedModel | None:
-        user_body = jsonable_encoder(user, by_alias=True, exclude_unset=True, exclude_none=True)
+        """return a UserCreatedModel if insert into database is succesfull otherwise None.
+        """
+        user_body = jsonable_encoder(
+            user, by_alias=True, exclude_none=True)
         try:
             new_user = await self.get_entity('Users').insert_one(user_body)
         except:
@@ -25,6 +28,41 @@ class UserRepository(BaseRepository):
         projection = make_excluded_fields(exclude_fields)
         user_result = await self.get_entity('Users').find_one({"_id": ObjectId(id)}, projection)
         return UserCreatedModel(**user_result) if not user_result is None else None
+
+    async def get_patients(self, *, professional_id: str, page_size: int, page_num: int):
+        """returns a set of Users documents belonging to page number `page_num`
+        where size of each page is `page_size`.
+        """
+        # Calculate number of documents to skip
+        print(professional_id)
+        skips = page_size * (page_num - 1)
+        query = {
+            'linked_professionals': professional_id,
+        }
+        projection = make_excluded_fields()
+        cursor = self.get_entity('Users').find(query, projection).skip(skips).limit(page_size)
+
+        patients =[]
+        for document in await cursor.to_list(length=page_size):
+            patients.append(UserCreatedModel(**document))
+
+        return patients
+
+    async def set_user_device_token(self, *, user_id: str, token: str) -> Literal['success', 'failed']:
+        update_token = await self.get_entity('Devices').update_one(
+            {"user_id": user_id},
+            {
+                '$set': {
+                    "token": token
+                },
+                '$currentDate': {'utd_at': True}
+            },
+            upsert=True)
+        if update_token.modified_count > 0 or not update_token.upserted_id is None:
+            return "success"
+        else:
+            return "failed"
+
     # async def update_user(self, *, user: UserCreate | UserUpdate, user_id: str, exclude_fields: Optional[list[str]] = None) -> UserPublic | None:
     #     user_body = jsonable_encoder(user, by_alias=True)
     #     updated_user = await self.get_entity('Users').update_one({'_id': user_id}, {'$set': user_body, '$currentDate': {'upAt': True}})

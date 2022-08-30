@@ -29,14 +29,14 @@ class UserBaseSchema(BaseModel):
     doc_id: str = Field(...)
     phone: str = Field(...)
     address: str
+    birthdate: date = Field(...)
     location: Optional[list[int]] = Field(None, max_items=2, min_items=2)
     sex: GenderEnum = Field(...)
-    birthdate: date = Field(...)
     height: UnitModel = Field(...)
+    role: UserTypeEnum = Field(...)
     weight: UnitModel = Field(...)
     profession: Optional[str]
     occupation: str = Field(None, min_length=3)
-    role: UserTypeEnum = Field(...)
     avatar: Optional[HttpUrl] = Field(None, alias="avatar")
     health_questions: Optional[HealthQuestionsModel] = Field(None, alias="questions")
 
