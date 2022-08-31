@@ -20,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 async def startup_db_client():
     app.clientdb = AsyncIOMotorClient(settings.database_connection_uri)
@@ -32,8 +33,8 @@ async def startup_db_client():
 async def shutdown_db_client():
     app.clientdb.close()
     logger.info("Closing connection to database")
-    
-app.include_router(api_router)
+
+app.include_router(api_router, prefix='/api')
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

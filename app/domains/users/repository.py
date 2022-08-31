@@ -1,5 +1,4 @@
 from typing import Optional, Literal
-from bson import ObjectId
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
 from fastapi.encoders import jsonable_encoder
@@ -26,7 +25,7 @@ class UserRepository(BaseRepository):
 
     async def get_user_by_id(self, id: str, exclude_fields: Optional[list[str]] = None):
         projection = make_excluded_fields(exclude_fields)
-        user_result = await self.get_entity('Users').find_one({"_id": ObjectId(id)}, projection)
+        user_result = await self.get_entity('Users').find_one({"_id": id}, projection)
         return UserCreatedModel(**user_result) if not user_result is None else None
 
     async def get_patients(self, *, professional_id: str, page_size: int, page_num: int):
