@@ -9,7 +9,6 @@ from fastapi.exceptions import RequestValidationError
 from app.domains.users.enums import UserTypeEnum
 from ...dependencies.database import get_repository
 from ...dependencies.authorization import get_user, get_user_with_claims, get_professional_user
-from ...core.responseModels import NotFoundResponse
 from ...core.enums import PageLimitEnum
 from .repository import UserRepository
 from .schemas import UserBaseSchema
