@@ -1,15 +1,9 @@
-from fastapi import APIRouter, Body, Depends, Query, HTTPException
+from fastapi import APIRouter, Body, Depends
 from fastapi.responses import JSONResponse
-from loguru import logger
 from starlette import status
 from fastapi.encoders import jsonable_encoder
-from firebase_admin import auth
-from pydantic import ValidationError
-from fastapi.exceptions import RequestValidationError
-from app.domains.users.enums import UserTypeEnum
 from ...dependencies.database import get_repository
 from ...dependencies.authorization import get_user, get_user_with_claims, get_professional_user
-from ...core.enums import PageLimitEnum
 
 router = APIRouter(prefix='/clincal-history', tags=['Clinical history'])
 
