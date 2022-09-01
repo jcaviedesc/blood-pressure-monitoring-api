@@ -30,8 +30,11 @@ async def add_medicine(
         return JSONResponse(content=jsonable_encoder(medicine_added, exclude_defaults=True, by_alias=False), status_code=status.HTTP_201_CREATED)
 
 # TODO add response model
+
+
 @router.get('', status_code=status.HTTP_200_OK, response_model=list[MedicineModelCreate])
-async def list_medicines(auth_user=Depends(get_user_with_claims),medicine_repo: MedicineRepository = Depends(get_repository(MedicineRepository))):
+async def list_medicines(auth_user=Depends(get_user_with_claims), medicine_repo: MedicineRepository = Depends(get_repository(MedicineRepository))):
+    print(auth_user.custom_claims)
     user_id = auth_user.custom_claims.get('ref')
     medicines = await medicine_repo.list_medicines(user_id=user_id)
 
