@@ -16,13 +16,19 @@ async def request_access_to_medical_records(
     auth_professional_user=Depends(get_professional_user),
     device_repo: DevicesRepository = Depends(get_repository(DevicesRepository))
 ):
+    user_id = auth_professional_user.custom_claims.get('ref')
+    if user_id == patient_id:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="you cannot request access to your own medical record")
+    
     device = await device_repo.get_device_by_user_id(patient_id)
     if device is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Patient not found, request access to medical records failed",
+            detail="patient not found, request access to medical records failed",
         )
     else:
+        patient = {}
         notification = notifications.Notification(
             title='notifee remote 7', body='notificacion creada desde el back')
         # send notification

@@ -6,13 +6,13 @@ from fastapi.encoders import jsonable_encoder
 from firebase_admin import auth
 from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
-from app.domains.users.enums import UserTypeEnum
-from ...dependencies.database import get_repository
-from ...dependencies.authorization import get_user, get_user_with_claims, get_professional_user
-from ...core.enums import PageLimitEnum
-from .repository import UserRepository
+from app.core.enums import UserTypeEnum, GenderEnum
+from app.core.models.users import PatientUserCreate, ProfessionalUserCreate
+from app.dependencies.database import get_repository
+from app.dependencies.authorization import get_user, get_user_with_claims, get_professional_user
+from app.core.enums import PageLimitEnum
+from app.core.repositories.users import UserRepository
 from .schemas import UserBaseSchema
-from .models import GenderEnum, PatientUserCreate, ProfessionalUserCreate
 
 
 router = APIRouter(prefix="/users", tags=["Users"])

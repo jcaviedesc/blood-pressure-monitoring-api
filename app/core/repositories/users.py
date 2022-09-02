@@ -2,7 +2,7 @@ from typing import Optional, Literal
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
 from fastapi.encoders import jsonable_encoder
-from .models import PatientUserCreate, ProfessionalUserCreate, UserCreatedModel
+from ..models.users import PatientUserCreate, ProfessionalUserCreate, UserCreatedModel
 
 
 class UserRepository(BaseRepository):
