@@ -10,6 +10,8 @@ class DatatimeModelMixin(BaseModel):
 
     @validator("created_at", "updated_at", pre=True, always=True)
     def default_datetime(cls, value: int) -> datetime.datetime:
+        # TODO quisa aqui podemos agregar una validacion y si
+        # created_at y updated_at son fechas validad y menores a now aceptar el valor
         return datetime.datetime.utcnow()
 
 

@@ -118,7 +118,7 @@ async def filter_users_list(
 @router.get("/me")
 async def get_user_info(auth_user=Depends(get_user_with_claims), users_repo: UserRepository = Depends(get_repository(UserRepository))):
     user = await users_repo.get_user_by_id(auth_user.custom_claims.get('ref'))
-    if not user is None:
+    if user is not None:
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
     else:
         raise HTTPException(status_code=404, detail="User not found")
