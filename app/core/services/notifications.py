@@ -1,12 +1,23 @@
 from firebase_admin import messaging
 from app.core.services import _notifee_encoder
+from app.core.services import _notifee_utils
 
-__all__ = ['Notification']
+__all__ = [
+    'Notification',
+    'AndroidImportance',
+    'NotificationAndroid',
+    'AndroidAction',
+
+    'send'
+]
 
 Notification = _notifee_encoder.Notification
+AndroidImportance = _notifee_utils.AndroidImportance
+NotificationAndroid = _notifee_utils.NotificationAndroid
+AndroidAction = _notifee_utils.AndroidAction
 
 
-def send(*, notifee_message, registration_token: str ) -> str:
+def send(*, notifee_message, registration_token: str) -> str:
     """Sends the given notifee_message via Firebase Cloud Messaging (FCM).
 
     Args:

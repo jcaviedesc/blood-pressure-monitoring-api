@@ -3,6 +3,8 @@ import json
 import numbers
 import re
 
+import app.core.services._notifee_utils as _notifee_utils
+
 
 class Notification():
     """A Notification type Notifee that can be sent via Firebase Cloud Messaging
@@ -131,12 +133,54 @@ class NotificationEncoder(json.JSONEncoder):
     def remove_null_values(cls, dict_value):
         return {k: v for k, v in dict_value.items() if v not in [None, [], {}]}
 
+    @classmethod
+    def encode_android(cls, android):
+        """Encodes an ``NotificationAndroid`` instance into JSON."""
+        if android is None:
+            return None
+        if not isinstance(android, _notifee_utils.NotificationAndroid):
+            raise ValueError(
+                'Notification.android must be an instance of NotificationAndroid class.')
+        result = {
+            'channelId': _Validators.check_string(
+                'AndroidConfig.channel_id', android.channelId),
+            'largeIcon': _Validators.check_string(
+                'AndroidConfig.largeIcon', android.largeIcon, non_empty=True),
+            'color': _Validators.check_string('AndroidConfig.color', android.color, non_empty=True),
+            'importance': android.importance,
+            'actions': [cls.encode_android_action(android_action) for android_action in android.actions]
+        }
+        result = cls.remove_null_values(result)
+        # priority = result.get('priority')
+        # if priority and priority not in ('high', 'normal'):
+        #     raise ValueError(
+        #         'Notification.importance must be "high" or "normal".')
+        return result
+
+    @classmethod
+    def encode_android_action(cls, action):
+        """Encodes an ``NotificationAndroid.action`` instance into JSON."""
+        if action is None:
+            return None
+        if not isinstance(action, _notifee_utils.AndroidAction):
+            raise ValueError('NotificationAndroid.action must be an instance of '
+                             'AndroidAction class.')
+        result = {
+            'icon': action.icon,
+            'input': action.input, # TODO add class encoder https://notifee.app/react-native/reference/androidinput 
+            'pressAction': action.pressAction, # TODO add class encoder https://notifee.app/react-native/reference/notificationpressaction
+            'title': action.title
+        }
+
+        result = cls.remove_null_values(result)
+        return result
+
     def default(self, o):  # pylint: disable=method-hidden
         if not isinstance(o, Notification):
             return json.JSONEncoder.default(self, o)
         result = {
             # add encoder
-            'android': o.android, 
+            'android': NotificationEncoder.encode_android(o.android),
             'body': _Validators.check_string('Notification.body', o.body, non_empty=True),
             'data': _Validators.check_string_dict('Notification.data', o.data),
             'id': _Validators.check_string('Notification.id', o.id, non_empty=True),

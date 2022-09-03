@@ -80,6 +80,7 @@ class ProfessionalUserCreate(UserCreateBase):
 
 class UserCreatedModel(UserCreateBase):
     cardiovascular_risk: Optional[CardiovascularRiskOption]
+    linked_professionals: Optional[list[str]] = []
     pass
 
 
