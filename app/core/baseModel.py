@@ -47,6 +47,10 @@ class User(BaseModel):
     avatar: str
     id: PyObjectId = Field(..., alias="_id")
 
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+
 
 class OwnerMixin(BaseModel):
     owner: User

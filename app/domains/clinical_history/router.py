@@ -1,4 +1,3 @@
-from urllib import response
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from starlette import status
@@ -79,10 +78,9 @@ async def request_access_to_medical_records(
         # send notification
         message_id = notifications.send(
             registration_token=device.token, notifee_message=notification)
-        response = {**notification_data, 'message_id': message_id}
-        return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(
-            response, exclude_defaults=True, by_alias=False))
-
+    response = {**notification_data, 'message_id': message_id}
+    return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(
+        response, exclude_defaults=True, by_alias=False))
 @router.patch("/{patient_id}/response/{request_id}")
 async def response_access_to_medical_records():
     pass

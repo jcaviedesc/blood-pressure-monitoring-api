@@ -53,9 +53,9 @@ class UserCreateBase(IDModelMixin, DatatimeModelMixin):
     def set_initial_measurements(self, height: UnitModel, weight: UnitModel):
         timestamp = datetime.utcnow()
         height_measurement = UserMeasurementModel(
-            name="Height", v=height.val, u=height.unit, lst_msrmnt=timestamp, status="normal", category='Body Measurements')
+            name="Height", v=height.val, u=height.unit, lst_msrmnt=timestamp, status="normal", category='Body')
         weight_measurement = UserMeasurementModel(
-            name="Weight", v=weight.val, u=weight.unit, lst_msrmnt=timestamp, status="normal", category='Body Measurements')
+            name="Weight", v=weight.val, u=weight.unit, lst_msrmnt=timestamp, status="normal", category='Body')
         blood_pressure = UserMeasurementModel(
             name="BloodPressure", v=0, u="mmHg", lst_msrmnt="", status="no data", category='Heart')
 
