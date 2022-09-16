@@ -1,16 +1,20 @@
-from curses.ascii import US
-import datetime
+from datetime import datetime
+from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, validator, Field
 
 
 class DatatimeModelMixin(BaseModel):
-    created_at: datetime.datetime = Field(None, alias="ctd_at")  # type: ignore
-    updated_at: datetime.datetime = Field(None, alias="utd_at")  # type: ignore
+    created_at: Optional[datetime] = Field(
+        None, alias="ctd_at")  # type: ignore
+    updated_at: Optional[datetime] = Field(
+        None, alias="utd_at")  # type: ignore
 
     @validator("created_at", "updated_at", pre=True, always=True)
-    def default_datetime(cls, value: int) -> datetime.datetime:
-        return datetime.datetime.utcnow()
+    def default_datetime(cls, value: int) -> datetime:
+        # TODO quisa aqui podemos agregar una validacion y si
+        # created_at y updated_at son fechas validad y menores a now aceptar el valor
+        return datetime.utcnow()
 
 
 class PyObjectId(ObjectId):

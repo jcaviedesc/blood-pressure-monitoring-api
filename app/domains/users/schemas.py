@@ -1,16 +1,8 @@
 from typing import Optional
 from datetime import date
 from pydantic import BaseModel, Field, HttpUrl
-from .enums import GenderEnum, UserTypeEnum, SIsystemUnitEnum, AsystemUnitEnum, HealthInfoEnum
-
-
-class UnitModel(BaseModel):
-    val: float | int = Field(..., alias="v")
-    unit: SIsystemUnitEnum | AsystemUnitEnum = Field(..., alias="u")
-
-    class Config:
-        allow_population_by_field_name = True
-
+from app.core.enums import GenderEnum, UserTypeEnum, HealthInfoEnum
+from app.core.models.measurement_units import UnitModel
 
 class HealthQuestionsModel(BaseModel):
     medicine: HealthInfoEnum = Field(..., alias="med")

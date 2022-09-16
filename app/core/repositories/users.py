@@ -2,7 +2,7 @@ from typing import Optional, Literal
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
 from fastapi.encoders import jsonable_encoder
-from .models import PatientUserCreate, ProfessionalUserCreate, UserCreatedModel
+from ..models.users import PatientUserCreate, ProfessionalUserCreate, UserCreatedModel
 
 
 class UserRepository(BaseRepository):
@@ -10,7 +10,8 @@ class UserRepository(BaseRepository):
     All database actions associated with the User resource
     """
     async def create_user(self, *, user: PatientUserCreate | ProfessionalUserCreate, exclude_fields: Optional[list[str]] = None) -> UserCreatedModel | None:
-        """return a UserCreatedModel if insert into database is succesfull otherwise None.
+        """
+        return a UserCreatedModel if insert into database is succesfull otherwise None.
         """
         user_body = jsonable_encoder(
             user, by_alias=True, exclude_none=True)
@@ -26,7 +27,7 @@ class UserRepository(BaseRepository):
     async def get_user_by_id(self, id: str, exclude_fields: Optional[list[str]] = None):
         projection = make_excluded_fields(exclude_fields)
         user_result = await self.get_entity('Users').find_one({"_id": id}, projection)
-        return UserCreatedModel(**user_result) if not user_result is None else None
+        return UserCreatedModel(**user_result) if user_result is not None else None
 
     async def get_patients(self, *, professional_id: str, page_size: int, page_num: int):
         """returns a set of Users documents belonging to page number `page_num`
@@ -39,9 +40,10 @@ class UserRepository(BaseRepository):
             'linked_professionals': professional_id,
         }
         projection = make_excluded_fields()
-        cursor = self.get_entity('Users').find(query, projection).skip(skips).limit(page_size)
+        cursor = self.get_entity('Users').find(
+            query, projection).skip(skips).limit(page_size)
 
-        patients =[]
+        patients = []
         for document in await cursor.to_list(length=page_size):
             patients.append(UserCreatedModel(**document))
 
@@ -57,7 +59,7 @@ class UserRepository(BaseRepository):
                 '$currentDate': {'utd_at': True}
             },
             upsert=True)
-        if update_token.modified_count > 0 or not update_token.upserted_id is None:
+        if update_token.modified_count > 0 or update_token.upserted_id is not None:
             return "success"
         else:
             return "failed"

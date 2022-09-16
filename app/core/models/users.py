@@ -3,8 +3,9 @@ from typing import Optional
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, Field, PositiveFloat, HttpUrl, PositiveInt
 from ...core.baseModel import DatatimeModelMixin, IDModelMixin
-from .schemas import  UnitModel
-from .enums import GenderEnum, HealthInfoEnum, AsystemUnitEnum, CardiovascularRiskOption, UserTypeEnum
+from ..models.measurement_units import UnitModel
+from ..enums import GenderEnum, HealthInfoEnum, AsystemUnitEnum, CardiovascularRiskOption, UserTypeEnum
+
 
 class UserMeasurementModel(BaseModel):
     name: str
@@ -12,9 +13,11 @@ class UserMeasurementModel(BaseModel):
     unit: str = Field(..., alias="u")
     last_measurement: datetime | str = Field(..., alias="lst_msrmnt")
     status: str
+    category: str
 
     class Config:
         allow_population_by_field_name = True
+
 
 class UserCreateBase(IDModelMixin, DatatimeModelMixin):
     name: str = Field(...)
@@ -32,7 +35,7 @@ class UserCreateBase(IDModelMixin, DatatimeModelMixin):
     age: Optional[PositiveInt]
     bmi: Optional[PositiveFloat]
     measurements: Optional[list[UserMeasurementModel]]
-    
+
     def calculate_age(self):
         time_difference = relativedelta(datetime.utcnow(), self.birthdate)
         self.age = time_difference.years
@@ -49,11 +52,16 @@ class UserCreateBase(IDModelMixin, DatatimeModelMixin):
 
     def set_initial_measurements(self, height: UnitModel, weight: UnitModel):
         timestamp = datetime.utcnow()
-        height_measurement = UserMeasurementModel(name="height", v=height.val, u=height.unit, lst_msrmnt=timestamp, status="normal")
-        weight_measurement = UserMeasurementModel(name="weight", v=weight.val, u=weight.unit, lst_msrmnt=timestamp, status="normal")
-        blood_pressure = UserMeasurementModel(name="blood pressure", v=0, u="mmHg", lst_msrmnt="", status="no data")
-        
-        self.measurements = [height_measurement, weight_measurement, blood_pressure]
+        height_measurement = UserMeasurementModel(
+            name="Height", v=height.val, u=height.unit, lst_msrmnt=timestamp, status="normal", category='Body Measurements')
+        weight_measurement = UserMeasurementModel(
+            name="Weight", v=weight.val, u=weight.unit, lst_msrmnt=timestamp, status="normal", category='Body Measurements')
+        blood_pressure = UserMeasurementModel(
+            name="BloodPressure", v=0, u="mmHg", lst_msrmnt="", status="no data", category='Heart')
+
+        self.measurements = [blood_pressure, height_measurement,
+                             weight_measurement]
+
 
 class PatientUserCreate(UserCreateBase):
     role: int = Field(UserTypeEnum.patient, const=True)
@@ -65,13 +73,17 @@ class PatientUserCreate(UserCreateBase):
         else:
             self.cardiovascular_risk = CardiovascularRiskOption.LOW
 
+
 class ProfessionalUserCreate(UserCreateBase):
     avatar: HttpUrl = Field(...)
     role: int = Field(UserTypeEnum.health_professional, const=True)
 
+
 class UserCreatedModel(UserCreateBase):
     cardiovascular_risk: Optional[CardiovascularRiskOption]
+    linked_professionals: Optional[list[str]] = []
     pass
+
 
 class UserUpdate(BaseModel):
     phone: Optional[str]

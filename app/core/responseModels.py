@@ -1,5 +1,3 @@
-import json
-
 class NotFoundResponse():
 
     def __init__(self, message):

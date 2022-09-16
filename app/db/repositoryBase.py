@@ -1,7 +1,10 @@
 from typing import Literal
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
-ENTITY = Literal['SelfcareTips', 'Users', 'BloodPressureMeasurements', 'Devices', 'Medicines']
+ENTITY = Literal['SelfcareTips', 'Users', 'BloodPressureMeasurements',
+                 'Devices', 'Medicines', 'ClinalHistoryRequests']
+
+
 class BaseRepository:
     def __init__(self, db: AsyncIOMotorDatabase) -> None:
         self._db = db

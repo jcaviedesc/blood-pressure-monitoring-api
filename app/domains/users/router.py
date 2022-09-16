@@ -6,14 +6,13 @@ from fastapi.encoders import jsonable_encoder
 from firebase_admin import auth
 from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
-from app.domains.users.enums import UserTypeEnum
-from ...dependencies.database import get_repository
-from ...dependencies.authorization import get_user, get_user_with_claims, get_professional_user
-from ...core.responseModels import NotFoundResponse
-from ...core.enums import PageLimitEnum
-from .repository import UserRepository
+from app.core.enums import UserTypeEnum, GenderEnum
+from app.core.models.users import PatientUserCreate, ProfessionalUserCreate
+from app.dependencies.database import get_repository
+from app.dependencies.authorization import get_user, get_user_with_claims, get_professional_user
+from app.core.enums import PageLimitEnum
+from app.core.repositories.users import UserRepository
 from .schemas import UserBaseSchema
-from .models import GenderEnum, PatientUserCreate, ProfessionalUserCreate
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -119,7 +118,7 @@ async def filter_users_list(
 @router.get("/me")
 async def get_user_info(auth_user=Depends(get_user_with_claims), users_repo: UserRepository = Depends(get_repository(UserRepository))):
     user = await users_repo.get_user_by_id(auth_user.custom_claims.get('ref'))
-    if not user is None:
+    if user is not None:
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
     else:
         raise HTTPException(status_code=404, detail="User not found")
