@@ -53,7 +53,7 @@ class User(BaseModel):
 
 
 class OwnerMixin(BaseModel):
-    owner: User
+    owner: Optional[User]
 
     def add_user(self, user: User):
         self.owner = user

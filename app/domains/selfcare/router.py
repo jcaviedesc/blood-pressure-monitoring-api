@@ -24,10 +24,10 @@ async def create_selfcare_tip(
     auth_professional: auth.UserRecord = Depends(get_professional_user)
 ) -> JSONResponse:
     title = get_title_from_html(tip.editor.patient)
-    data = SelfcareModel(**tip.dict(), title=title)
-    data.add_user(user=User(name=auth_professional.display_name,  # type: ignore
-                  avatar=auth_professional.photo_url, _id=auth_professional.custom_claims.get('ref')))  # type: ignore
-    selfcare_created = await selfcare_repo.insert_selfcare_tip(tip=data)
+    selfcare_user = User(name=auth_professional.display_name,  # type: ignore
+                  avatar=auth_professional.photo_url, _id=auth_professional.custom_claims.get('ref')) # type: ignore
+    selfcare = SelfcareModel(**tip.dict(), title=title, owner=selfcare_user) 
+    selfcare_created = await selfcare_repo.insert_selfcare_tip(tip=selfcare)
     return JSONResponse(status_code=HTTP_201_CREATED, content=jsonable_encoder(selfcare_created, exclude_defaults=True, by_alias=False))
 
 
