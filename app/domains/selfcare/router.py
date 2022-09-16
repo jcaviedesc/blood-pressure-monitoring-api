@@ -21,7 +21,7 @@ async def create_selfcare_tip(
     tip: SelfcareTipSchema = Body(...),
     selfcare_repo: SelfcareRepository = Depends(
         get_repository(SelfcareRepository)),
-    auth_professional: auth.UserRecord = Depends(get_professional_user())
+    auth_professional: auth.UserRecord = Depends(get_professional_user)
 ) -> JSONResponse:
     title = get_title_from_html(tip.editor.patient)
     data = SelfcareModel(**tip.dict(), title=title)
