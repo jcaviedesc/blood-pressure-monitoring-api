@@ -4,7 +4,7 @@ from bson import ObjectId
 from pydantic import BaseModel, validator, Field
 
 
-class DatatimeModelMixin(BaseModel):
+class DatetimeModelMixin(BaseModel):
     created_at: Optional[datetime] = Field(
         None, alias="ctd_at")  # type: ignore
     updated_at: Optional[datetime] = Field(

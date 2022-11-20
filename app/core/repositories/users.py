@@ -2,7 +2,7 @@ from typing import Optional, Literal
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
 from fastapi.encoders import jsonable_encoder
-from ..models.users import PatientUserCreate, ProfessionalUserCreate, UserCreatedModel
+from ..models.users import PatientUserCreate, ProfessionalUserCreate, UserCreatedModel, UserUpdateLinkedProfessionals
 
 
 class UserRepository(BaseRepository):
@@ -29,12 +29,16 @@ class UserRepository(BaseRepository):
         user_result = await self.get_entity('Users').find_one({"_id": id}, projection)
         return UserCreatedModel(**user_result) if user_result is not None else None
 
+    async def get_user_by_document_id(self, document: str, exclude_fields: Optional[list[str]] = None):
+        projection = make_excluded_fields(exclude_fields)
+        user_result = await self.get_entity('Users').find_one({"doc_id": document}, projection)
+        return UserCreatedModel(**user_result) if user_result is not None else None
+
     async def get_patients(self, *, professional_id: str, page_size: int, page_num: int):
         """returns a set of Users documents belonging to page number `page_num`
         where size of each page is `page_size`.
         """
         # Calculate number of documents to skip
-        print(professional_id)
         skips = page_size * (page_num - 1)
         query = {
             'linked_professionals': professional_id,
@@ -64,15 +68,21 @@ class UserRepository(BaseRepository):
         else:
             return "failed"
 
-    # async def update_user(self, *, user: UserCreate | UserUpdate, user_id: str, exclude_fields: Optional[list[str]] = None) -> UserPublic | None:
-    #     user_body = jsonable_encoder(user, by_alias=True)
-    #     updated_user = await self.get_entity('Users').update_one({'_id': user_id}, {'$set': user_body, '$currentDate': {'upAt': True}})
-    #     if updated_user.modified_count > 0:
-    #         projection = make_excluded_fields(exclude_fields)
-    #         user_result = await self.get_entity('Users').find_one({"_id": user_id}, projection)
-    #         return UserPublic(**user_result)
-    #     return None
+    async def update_linked_specialists(self, *, patient_id: str, specialist_id: str) -> UserUpdateLinkedProfessionals | None:
+        try:
+            updated_user = await self.get_entity('Users').update_one(
+                {"_id": patient_id},
+                {
+                    "$push": {"linked_professionals": specialist_id},
+                    "$currentDate": {"utd_at": True}
+                })
 
-    # async def find_by_phone_number(self, *, phone_number: str) -> UserPublic | None:
-    #     user_result = await self.get_entity('Users').find_one({"phone_number": phone_number})
-    #     return UserPublic(**user_result) if user_result is not None else None
+            if updated_user.modified_count > 0:
+                projection = make_excluded_fields()
+                user_result = await self.get_entity('Users').find_one(
+                    {"_id": patient_id},
+                    {**projection, "linked_professionals": 1}
+                )
+                return UserUpdateLinkedProfessionals(**user_result)
+        except:
+            return None

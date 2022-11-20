@@ -119,7 +119,7 @@ async def filter_users_list(
 async def get_user_info(auth_user=Depends(get_user_with_claims), users_repo: UserRepository = Depends(get_repository(UserRepository))):
     user = await users_repo.get_user_by_id(auth_user.custom_claims.get('ref'))
     if user is not None:
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
+        return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(user, exclude_defaults=True, by_alias=False))
     else:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -132,12 +132,12 @@ async def get_patients_by_professional(
         limit: PageLimitEnum = PageLimitEnum.small
     ):
     user_id = auth_professional_user.custom_claims.get('ref')
-    patiens = await users_repo.get_patients(professional_id=user_id, page_num=page, page_size=limit)
+    patients = await users_repo.get_patients(professional_id=user_id, page_num=page, page_size=limit)
 
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content=jsonable_encoder(
-            patiens, exclude_defaults=True, by_alias=False)
+            patients, exclude_defaults=True, by_alias=False)
     )
 
 @router.put("/{user_id}/device-token")

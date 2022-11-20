@@ -67,6 +67,6 @@ def get_professional_user(user=Depends(get_user_with_claims)):
     if not user.custom_claims.get('role', -1) == 1:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Sorry! user is not authorized",
+            detail=f"Sorry! user role is not authorized",
         )
     return user

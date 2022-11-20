@@ -2,7 +2,7 @@ from datetime import datetime, date
 from typing import Optional
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel, Field, PositiveFloat, HttpUrl, PositiveInt
-from ...core.baseModel import DatatimeModelMixin, IDModelMixin
+from ...core.baseModel import DatetimeModelMixin, IDModelMixin
 from ..models.measurement_units import UnitModel
 from ..enums import GenderEnum, HealthInfoEnum, AsystemUnitEnum, CardiovascularRiskOption, UserTypeEnum
 
@@ -19,7 +19,7 @@ class UserMeasurementModel(BaseModel):
         allow_population_by_field_name = True
 
 
-class UserCreateBase(IDModelMixin, DatatimeModelMixin):
+class UserCreateBase(IDModelMixin, DatetimeModelMixin):
     name: str = Field(...)
     last_name: str = Field(...)
     doc_id: str = Field(...)
@@ -94,3 +94,6 @@ class UserUpdate(BaseModel):
     height: Optional[UnitModel]
     weight: Optional[UnitModel]
     profile_url: Optional[str]
+
+class UserUpdateLinkedProfessionals(IDModelMixin):
+    linked_professionals: list[str]

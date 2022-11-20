@@ -1,8 +1,8 @@
 from pydantic import Field
 from .schema import SelfcareTipSchema;
-from ...core.baseModel import DatatimeModelMixin, IDModelMixin, OwnerMixin
+from ...core.baseModel import DatetimeModelMixin, IDModelMixin, OwnerMixin
 
-class SelfcareModel(SelfcareTipSchema, DatatimeModelMixin, IDModelMixin, OwnerMixin):
+class SelfcareModel(SelfcareTipSchema, DatetimeModelMixin, IDModelMixin, OwnerMixin):
     title: str = Field(...)
     class Config:
         allow_population_by_field_name = True
