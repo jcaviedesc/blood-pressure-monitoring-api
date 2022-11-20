@@ -1,4 +1,5 @@
 from typing import Optional
+from loguru import logger
 from fastapi.encoders import jsonable_encoder
 from ...db.repositoryBase import BaseRepository
 from ...db.projections import make_excluded_fields
@@ -46,8 +47,9 @@ class ClinicalMonitoringRequestsRepository(BaseRepository):
             if updated_request.modified_count:
                 projection = make_excluded_fields(exclude_fields)
                 request_result = await self.get_entity('ClinicalMonitoringRequests').find_one(
-                    {"_id": id}, projection)
+                    {"_id": request_id}, projection)
                 return ClinicalMonitoringRequestsCreateModel(**request_result)
-        except:
+        except Exception as err:
+            logger.error(err)
             # TODO agregar errorhandler
             return None

@@ -76,7 +76,7 @@ class UserRepository(BaseRepository):
                     "$push": {"linked_professionals": specialist_id},
                     "$currentDate": {"utd_at": True}
                 })
-
+            # TODO que pasa si se acutaliza pero falla al obtener al data del usuario?
             if updated_user.modified_count > 0:
                 projection = make_excluded_fields()
                 user_result = await self.get_entity('Users').find_one(
@@ -84,5 +84,7 @@ class UserRepository(BaseRepository):
                     {**projection, "linked_professionals": 1}
                 )
                 return UserUpdateLinkedProfessionals(**user_result)
+            else:
+                return None
         except:
             return None

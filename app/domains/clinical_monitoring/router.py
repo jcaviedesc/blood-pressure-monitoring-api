@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from starlette import status
 from firebase_admin import auth
 from fastapi.encoders import jsonable_encoder
+from loguru import logger
 from app.dependencies.database import get_repository
 from app.dependencies.authorization import get_professional_user
 from app.core.repositories import UserRepository, DevicesRepository
@@ -24,7 +25,7 @@ async def request_for_patient_monitoring(
     clinical_history_request_repo: ClinicalMonitoringRequestsRepository = Depends(
         get_repository(ClinicalMonitoringRequestsRepository)),
 ):
-    # TODO implement chain of responsibility and change to use-cases 
+    # TODO implement chain of responsibility and change to use-cases
     professional_id = ''
     if auth_professional_user.custom_claims is not None:
         professional_id = auth_professional_user.custom_claims.get('ref')
@@ -44,8 +45,8 @@ async def request_for_patient_monitoring(
         patient_id = str(patient.id)
         if professional_id == str(patient.id):
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail="you cannot request access to your own medical record")
-        
+                                detail="you cannot request access to your own medical record")
+
         if professional_id in patient.linked_professionals:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -93,7 +94,7 @@ async def request_for_patient_monitoring(
         # send notification
         message_id = notifications.send(
             registration_token=patient_device.token, notifee_message=notification)
-    
+
     response = {**notification_data, 'message_id': message_id}
 
     return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(
@@ -121,11 +122,13 @@ async def patient_response_to_clinical_monitoring(
         else:
             # si todo bien y la respuesta es confirmed actualizamos linked_professionals del profesional.
             patient_updated = await users_repo.update_linked_specialists(patient_id=patient_id, specialist_id=updated_request.request_by)
-
+            print(patient_updated)
         # TODO send push notification on response?
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(
             patient_updated, exclude_defaults=True, by_alias=False))
     else:
+        logger.error(str({'request_id': request_id,
+                     'path': 'patient_response_to_clinical_monitoring'}))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ups, we can not process your request, it is what it is, but we are working to solve it",
