@@ -9,7 +9,7 @@ from ..enums import GenderEnum, HealthInfoEnum, AsystemUnitEnum, CardiovascularR
 
 class UserMeasurementModel(BaseModel):
     name: str
-    value: float = Field(..., alias="v")
+    value: float | str = Field(..., alias="v")
     unit: str = Field(..., alias="u")
     last_measurement: datetime | str = Field(..., alias="lst_msrmnt")
     status: str
@@ -94,6 +94,7 @@ class UserUpdate(BaseModel):
     height: Optional[UnitModel]
     weight: Optional[UnitModel]
     profile_url: Optional[str]
+
 
 class UserUpdateLinkedProfessionals(IDModelMixin):
     linked_professionals: list[str]

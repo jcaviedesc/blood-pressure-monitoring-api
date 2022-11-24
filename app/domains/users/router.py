@@ -36,8 +36,9 @@ async def create_user(
         raise RequestValidationError(errors=err.raw_errors)
 
     user.calculate_age()
-    user.calculate_body_mass_index(height=new_user.height, weight=new_user.weight).set_initial_measurements(height=new_user.height, weight=new_user.weight)
-    
+    user.calculate_body_mass_index(height=new_user.height, weight=new_user.weight).set_initial_measurements(
+        height=new_user.height, weight=new_user.weight)
+
     user_created = await users_repo.create_user(user=user)
     # TODO crear un servicio asyncrono que guarde las respuestas del usuario y no
     # consuma CPU y tiempo. Quisa con background task de fastapis
@@ -102,7 +103,6 @@ async def create_user(
 #         return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content={"msg": "User already register"})
 
 
-
 @router.get("", status_code=status.HTTP_200_OK)
 async def filter_users_list(
     q: str = Query(..., max_length=128),
@@ -124,21 +124,31 @@ async def get_user_info(auth_user=Depends(get_user_with_claims), users_repo: Use
         raise HTTPException(status_code=404, detail="User not found")
 
 
-@router.get("/professionals/patients")
+@router.get("/patients")
 async def get_patients_by_professional(
-        auth_professional_user=Depends(get_professional_user),
-        users_repo: UserRepository = Depends(get_repository(UserRepository)),
-        page: int = Query(..., ge=1),
-        limit: PageLimitEnum = PageLimitEnum.small
-    ):
+    auth_professional_user=Depends(get_professional_user),
+    users_repo: UserRepository = Depends(get_repository(UserRepository)),
+    page: int = Query(..., ge=1),
+    document: str = Query(None),
+    limit: PageLimitEnum = PageLimitEnum.small
+):
     user_id = auth_professional_user.custom_claims.get('ref')
-    patients = await users_repo.get_patients(professional_id=user_id, page_num=page, page_size=limit)
+    params = {
+        'doc_id': {'$regex': f'^{document}'} if document is not None else None,
+        'page_num': page,
+        'page_size': limit,
+    }
+
+    params = {k: v for k, v in params.items() if v}
+
+    patients = await users_repo.get_patients(professional_id=user_id, **params)
 
     return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
+        status_code=status.HTTP_200_OK,
         content=jsonable_encoder(
             patients, exclude_defaults=True, by_alias=False)
     )
+
 
 @router.put("/{user_id}/device-token")
 async def set_device_token(
@@ -155,4 +165,3 @@ async def set_device_token(
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=response)
-        

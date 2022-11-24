@@ -34,7 +34,7 @@ class UserRepository(BaseRepository):
         user_result = await self.get_entity('Users').find_one({"doc_id": document}, projection)
         return UserCreatedModel(**user_result) if user_result is not None else None
 
-    async def get_patients(self, *, professional_id: str, page_size: int, page_num: int):
+    async def get_patients(self, *, professional_id: str, page_size: int, page_num: int, **query_params):
         """returns a set of Users documents belonging to page number `page_num`
         where size of each page is `page_size`.
         """
@@ -42,7 +42,9 @@ class UserRepository(BaseRepository):
         skips = page_size * (page_num - 1)
         query = {
             'linked_professionals': professional_id,
+            **query_params,
         }
+        print(query)
         projection = make_excluded_fields()
         cursor = self.get_entity('Users').find(
             query, projection).skip(skips).limit(page_size)
@@ -53,6 +55,7 @@ class UserRepository(BaseRepository):
 
         return patients
 
+    # TODO change repository
     async def set_user_device_token(self, *, user_id: str, token: str) -> Literal['success', 'failed']:
         update_token = await self.get_entity('Devices').update_one(
             {"user_id": user_id},

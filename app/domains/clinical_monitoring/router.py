@@ -78,7 +78,7 @@ async def request_for_patient_monitoring(
             'patient': patient_id,
         }
         # TODO i18n
-        body_message = f"{auth_professional_user.display_name} ."
+        body_message = f"{auth_professional_user.display_name} quiere empezar hacer seguimiento de tu salud."
 
         android_press_action = notifications.NotificationPressAction(
             id='medical_records_access')
@@ -122,7 +122,6 @@ async def patient_response_to_clinical_monitoring(
         else:
             # si todo bien y la respuesta es confirmed actualizamos linked_professionals del profesional.
             patient_updated = await users_repo.update_linked_specialists(patient_id=patient_id, specialist_id=updated_request.request_by)
-            print(patient_updated)
         # TODO send push notification on response?
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(
             patient_updated, exclude_defaults=True, by_alias=False))
